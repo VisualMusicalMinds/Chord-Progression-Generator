@@ -603,8 +603,9 @@
       }
     }
 
-    // Cancel playback when leaving the page or pressing the red circle (just in case)
-    window.addEventListener('blur', stopProgressionPlayback);
+    // Cancel playback only when user leaves the page (not on blur)
+    // (removed: window.addEventListener('blur', stopProgressionPlayback);)
+
     cancelBtn.addEventListener('click', stopProgressionPlayback);
 
     // ----- CLEAR MARIMBA-LIKE SYNTH -----
@@ -782,17 +783,7 @@
       }
     });
 
-    window.addEventListener('blur', () => {
-      stopProgressionPlayback();
-      Object.keys(keyToBoxId).forEach(key => {
-        const box = document.getElementById(keyToBoxId[key]);
-        if (box) {
-          box.classList.remove('kb-active');
-          stopPulse(box.id);
-        }
-        downKeys[key] = false;
-      });
-    });
+    // (REMOVED) window.addEventListener('blur', stopProgressionPlayback);
 
     chordBoxes.forEach(box => {
       box.addEventListener('focus', e => {
