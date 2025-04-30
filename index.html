@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Chord Grid Progression UI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <style>
     html, body {
       height: 100%;
       margin: 0;
       background: #fff;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
     body {
       font-family: system-ui, sans-serif;
-      background: #fff;
       margin: 0;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
       align-items: stretch;
+      background: #fff;
     }
     .centered-app-container {
       display: flex;
@@ -26,28 +28,36 @@
       justify-content: flex-start;
       min-height: 100vh;
       width: 100vw;
+      box-sizing: border-box;
+      padding: 0;
     }
     .progression-top-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 2.5rem;
-      margin-bottom: 1.5rem;
+      margin-top: 2.5vw;
+      margin-bottom: 1.5vw;
       width: 100vw;
+      padding: 0 2vw;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      gap: 2vw;
     }
     .play-controls-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      margin-right: 2em;
-      min-width: 4em;
-      gap: 2em;
-      height: 7.5em;
+      min-width: 3em;
+      gap: 1.2em;
+      height: auto;
+      flex-shrink: 0;
     }
     .play-btn {
       width: 2.7em;
       height: 2.7em;
+      min-width: 2.2em;
+      min-height: 2.2em;
       border-radius: 50%;
       border: none;
       outline: none;
@@ -59,9 +69,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5em;
+      font-size: 1.4em;
       transition: filter 0.12s, box-shadow 0.12s, background 0.12s;
-      margin-bottom: 0.7em;
       position: relative;
     }
     .play-btn.playing {
@@ -74,25 +83,27 @@
     .metronome-controls {
       display: flex;
       align-items: center;
-      margin-top: 0.4em;
-      gap: 0.6em;
+      margin-top: 0.2em;
+      gap: 0.35em;
+      font-size: 1em;
     }
     .metronome-input {
-      width: 3.6em;
-      font-size: 1.04em;
+      width: 3.2em;
+      font-size: 1em;
       border-radius: 0.4em;
       border: 1.8px solid #b9bac7;
       text-align: center;
-      padding: 0.3em 0.1em;
+      padding: 0.2em 0.1em;
       outline: none;
       transition: border 0.13s;
-      margin-right: 0.3em;
+      margin-right: 0.1em;
+      background: #f7fafb;
     }
     .metronome-input:focus {
       border-color: #44d1ff;
     }
     .bpm-label {
-      font-size: 0.99em;
+      font-size: 0.98em;
       color: #444;
       letter-spacing: 0.03em;
       user-select: none;
@@ -101,13 +112,16 @@
     .slots-container {
       display: flex;
       gap: 1.2em;
-      padding: 1em 1.5em;
+      padding: 0.7em 0.7em;
       border-radius: 1em;
       transition: box-shadow 0.18s, border-color 0.18s;
       border: 2.5px solid transparent;
       background: #f7fafd;
       justify-content: center;
       align-items: center;
+      flex-wrap: wrap;
+      flex-shrink: 1;
+      min-width: 0;
     }
     .slots-container.active {
       border-color: #2ecc40;
@@ -117,19 +131,22 @@
     .slot {
       width: 3.5em;
       height: 3.5em;
+      min-width: 2.3em;
+      min-height: 2.3em;
       border: 2px solid #bbb;
       border-radius: 0.7em;
       background: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3em;
+      font-size: 1.1em;
       color: #888;
       transition: border-color 0.15s, background 0.15s;
       box-sizing: border-box;
       position: relative;
       overflow: hidden;
       user-select: none;
+      flex-shrink: 1;
     }
     .slots-container.active .slot {
       border-color: #66d27b;
@@ -140,6 +157,8 @@
       height: 90%;
       object-fit: contain;
       pointer-events: none;
+      max-width: 100%;
+      max-height: 100%;
     }
     .slot.slot-active {
       box-shadow: 0 0 0 3px #5ddb8e;
@@ -166,13 +185,16 @@
       display: flex;
       flex-direction: column;
       gap: 0.7em;
-      margin-left: 1.9em;
+      margin-left: 1.2vw;
       align-items: center;
       user-select: none;
+      flex-shrink: 0;
     }
     .circle-btn {
       width: 2.3em;
       height: 2.3em;
+      min-width: 2em;
+      min-height: 2em;
       border-radius: 50%;
       border: none;
       outline: none;
@@ -183,6 +205,7 @@
       align-items: center;
       justify-content: center;
       transition: filter 0.1s, box-shadow 0.1s;
+      flex-shrink: 0;
     }
     .circle-btn.green {
       background: #4de26f;
@@ -206,24 +229,28 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      margin-top: 2rem;
+      margin-top: 2vw;
       background: #fff;
-      padding: 2em;
-      box-sizing: content-box;
+      padding: 1em 0.5em;
+      box-sizing: border-box;
     }
     .chord-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(80px, 12vw));
-      grid-template-rows: minmax(80px, 12vw) minmax(80px, 12vw);
+      grid-template-columns: repeat(3, minmax(60px, 20vw));
+      grid-template-rows: minmax(60px, 20vw) minmax(60px, 20vw);
       gap: 4px;
       justify-items: center;
       align-items: start;
       background: #fff;
+      width: 100%;
+      max-width: 420px;
     }
     .chord-box {
       aspect-ratio: 1 / 1;
       width: 100%;
-      height: auto;
+      max-width: 120px;
+      min-width: 48px;
+      min-height: 48px;
       background: transparent !important;
       border: none !important;
       display: flex;
@@ -247,7 +274,7 @@
     .chord-box:active,
     .chord-box.active,
     .chord-box.kb-active {
-      transform: scale(1.3);
+      transform: scale(1.2);
       z-index: 2;
       box-shadow: none !important;
       outline: none !important;
@@ -280,19 +307,20 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 2.5rem 0 1.2rem 0;
+      margin: 2.5vw 0 1.2vw 0;
       background: #fff;
     }
     .volume-label {
       font-family: system-ui, sans-serif;
-      font-size: 1.1em;
+      font-size: 1em;
       color: #222;
       margin-right: 0.6em;
       letter-spacing: 0.04em;
       user-select: none;
     }
     .volume-slider {
-      width: 180px;
+      width: 120px;
+      max-width: 40vw;
       accent-color: #5694e3;
       height: 2.5em;
     }
@@ -302,19 +330,132 @@
       text-align: right;
       font-family: monospace;
       color: #222;
-      font-size: 1.07em;
+      font-size: 1em;
       user-select: none;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 900px) {
+      .progression-top-row {
+        flex-wrap: wrap;
+        gap: 2vw;
+      }
+      .chord-grid {
+        max-width: 330px;
+      }
+    }
+    @media (max-width: 680px) {
+      .progression-top-row {
+        gap: 1vw;
+        margin-top: 1vw;
+        margin-bottom: 1vw;
+        padding: 0 0.2vw;
+      }
+      .slots-container {
+        gap: 0.5em;
+        padding: 0.3em 0.3em;
+      }
+      .slot {
+        width: 2.3em;
+        height: 2.3em;
+        min-width: 1.5em;
+        min-height: 1.5em;
+        font-size: 0.95em;
+      }
+      .play-controls-wrapper {
+        min-width: 2em;
+        gap: 0.7em;
+      }
+      .circle-btn, .play-btn {
+        width: 1.7em;
+        height: 1.7em;
+        min-width: 1.4em;
+        min-height: 1.4em;
+        font-size: 1em;
+      }
+      .metronome-input {
+        width: 2.3em;
+        font-size: 0.9em;
+      }
+      .bpm-label {
+        font-size: 0.88em;
+      }
+      .chord-grid {
+        max-width: 210px;
+        grid-template-columns: repeat(3, minmax(36px, 1fr));
+        grid-template-rows: minmax(36px, 1fr) minmax(36px, 1fr);
+      }
+      .chord-box {
+        max-width: 60px;
+        min-width: 24px;
+        min-height: 24px;
+      }
+    }
+    @media (max-width: 430px) {
+      .progression-top-row, .chord-grid-container, .volume-container {
+        flex-direction: column;
+        align-items: center !important;
+        width: 100vw;
+        min-width: 0;
+      }
+      .play-controls-wrapper {
+        flex-direction: row;
+        gap: 0.6em;
+        margin-right: 0;
+        width: 100vw;
+        justify-content: center;
+        min-width: 0;
+      }
+      .slots-container {
+        width: 98vw;
+        min-width: 0;
+        max-width: 99vw;
+        gap: 0.3em;
+        padding: 0.2em 0.2em;
+      }
+      .slot {
+        min-width: 1em;
+        min-height: 1em;
+        width: 1.5em;
+        height: 1.5em;
+        font-size: 0.8em;
+      }
+      .circle-buttons {
+        flex-direction: row;
+        margin-left: 0;
+        gap: 0.4em;
+      }
+      .chord-grid-container {
+        padding: 0.6em 0.1em 0.4em 0.1em;
+      }
+      .chord-grid {
+        max-width: 99vw;
+        grid-template-columns: repeat(3, minmax(18px, 1fr));
+        grid-template-rows: minmax(18px, 1fr) minmax(18px, 1fr);
+        gap: 2px;
+      }
+      .chord-box {
+        max-width: 32px;
+        min-width: 16px;
+        min-height: 16px;
+      }
+      .volume-slider {
+        width: 60vw;
+        min-width: 60px;
+      }
+      .volume-value, .volume-label {
+        font-size: 0.85em;
+      }
     }
   </style>
 </head>
 <body>
   <div class="centered-app-container">
-    <!-- Top row: play/stop, metronome, 4 slots, 2 circle buttons -->
     <div class="progression-top-row">
       <div class="play-controls-wrapper">
         <button class="play-btn" id="play-btn" aria-label="Play/Stop Progression">
-          <span class="play-icon" id="play-icon">&#9654;</span><!-- ► -->
-          <span class="stop-icon" id="stop-icon" style="display:none;">&#9632;</span><!-- ■ -->
+          <span class="play-icon" id="play-icon">&#9654;</span>
+          <span class="stop-icon" id="stop-icon" style="display:none;">&#9632;</span>
         </button>
         <div class="metronome-controls">
           <input type="number" id="bpm-input" class="metronome-input" min="40" max="300" value="90">
@@ -332,8 +473,6 @@
         <button class="circle-btn red" id="cancel-btn" aria-label="Cancel Progression"></button>
       </div>
     </div>
-
-    <!-- Chord grid -->
     <div class="chord-grid-container">
       <div class="chord-grid">
         <button class="chord-box" id="d-box" data-pos="1A" data-key="f" data-chord="d-box" aria-label="D box" tabindex="0">
@@ -359,7 +498,7 @@
     </div>
   </div>
   <script>
-    // ----- Assignment mode state -----
+    // Assignment mode state
     let assignmentMode = false;
     let selectedChordBox = null; // HTMLElement of selected chord-box for assignment
     let slotImages = [null, null, null, null]; // Store src of assigned images for slots
@@ -404,7 +543,7 @@
     };
     let playBpm = parseInt(bpmInput.value, 10) || 90;
 
-    // Enter assignment mode
+    // Assignment mode functions
     function enterAssignmentMode() {
       assignmentMode = true;
       slotsContainer.classList.add('active');
@@ -412,8 +551,6 @@
       clearChordSelection();
       slotElements.forEach(slot => slot.classList.remove('slot-active'));
     }
-
-    // Exit assignment mode
     function exitAssignmentMode() {
       assignmentMode = false;
       slotsContainer.classList.remove('active');
@@ -422,21 +559,15 @@
       slotElements.forEach(slot => slot.classList.remove('slot-active'));
       slotElements.forEach(slot => slot.classList.remove('slot-delete-hover'));
     }
-
-    // Clear chord selection highlight
     function clearChordSelection() {
       chordBoxes.forEach(box => box.classList.remove('assignment-selected'));
       selectedChordBox = null;
     }
-
-    // Activate a chord box for assignment
     function selectChordBoxForAssignment(box) {
       clearChordSelection();
       box.classList.add('assignment-selected');
       selectedChordBox = box;
     }
-
-    // Assign chord image to a slot
     function assignChordToSlot(slotIdx) {
       if (!selectedChordBox) return;
       const chordId = selectedChordBox.getAttribute('data-chord');
@@ -448,15 +579,11 @@
       slot.classList.add('slot-active');
       clearChordSelection();
     }
-
-    // Clear a slot (assignment mode single-click)
     function clearSlot(idx) {
       slotImages[idx] = null;
       slotElements[idx].innerHTML = '';
       slotElements[idx].classList.remove('slot-active');
     }
-
-    // Clear all slot images (utility, not needed yet)
     function clearAllSlots() {
       slotImages = [null, null, null, null];
       slotElements.forEach(slot => {
@@ -465,13 +592,10 @@
       });
     }
 
-    // --- Event listeners ---
-
-    // Only allow assignment mode to be toggled by the green/red buttons
+    // Event listeners
     activateBtn.addEventListener('click', enterAssignmentMode);
     cancelBtn.addEventListener('click', () => {
       exitAssignmentMode();
-      // Don't reset assignment mode from stopProgressionPlayback or playback logic!
     });
 
     // Chord box click
@@ -499,7 +623,6 @@
           }
         }
       });
-      // Visual feedback for delete on mouse over in assignment mode
       slot.addEventListener('mouseenter', e => {
         if (assignmentMode && slotImages[idx]) {
           slot.classList.add('slot-delete-hover');
@@ -510,7 +633,7 @@
       });
     });
 
-    // ----- PLAY/STOP and PROGRESSION LOGIC -----
+    // PLAY/STOP and PROGRESSION LOGIC
     function setPlayBtnState(playing) {
       if (playing) {
         playBtn.classList.add('playing');
@@ -522,7 +645,6 @@
         stopIcon.style.display = 'none';
       }
     }
-
     playBtn.addEventListener('click', () => {
       if (!isPlaying) {
         playBpm = parseInt(bpmInput.value, 10) || 90;
@@ -531,7 +653,6 @@
         stopProgressionPlayback();
       }
     });
-
     bpmInput.addEventListener('input', () => {
       let val = parseInt(bpmInput.value, 10);
       if (isNaN(val) || val < 40) val = 40;
@@ -539,7 +660,6 @@
       bpmInput.value = val;
       playBpm = val;
     });
-
     function startProgressionPlayback() {
       if (isPlaying) return;
       isPlaying = true;
@@ -548,20 +668,15 @@
       clearAllSlotPlayingHighlight();
       nextProgressionBeat();
     }
-
     function stopProgressionPlayback() {
       isPlaying = false;
       setPlayBtnState(false);
       if (playLoopTimer) clearTimeout(playLoopTimer);
       clearAllSlotPlayingHighlight();
-      // Do NOT call exitAssignmentMode() here!
-      // Assignment mode is only toggled by the green/red buttons.
     }
-
     function clearAllSlotPlayingHighlight() {
       slotElements.forEach(slot => slot.classList.remove('slot-playing'));
     }
-
     function nextProgressionBeat() {
       if (!isPlaying) return;
       const quarter = 60000 / playBpm;
@@ -569,11 +684,9 @@
       // Highlight the current slot
       const curSlotIdx = playState.slotIndex;
       slotElements[curSlotIdx].classList.add('slot-playing');
-
       // Play the chord (if any) or silence
       const chordInfo = slotImages[curSlotIdx];
       if (chordInfo && chordInfo.src) {
-        // Find which chord box this matches for chordData
         let chordId = null;
         for (const [id, info] of Object.entries(chordBoxImageMap)) {
           if (info.src === chordInfo.src) {
@@ -585,30 +698,21 @@
           playClearMarimbaChord(chordData[chordId]);
         }
       }
-      // If no chord, do nothing (4 beats of silence)
-
       playState.beat++;
       if (playState.beat < 4) {
-        // Stay on current slot for 4 beats
         playLoopTimer = setTimeout(nextProgressionBeat, quarter);
       } else {
-        // Move to next slot
         playState.beat = 0;
         playState.slotIndex++;
         if (playState.slotIndex >= 4) {
-          // Loop: back to first slot
           playState.slotIndex = 0;
         }
         playLoopTimer = setTimeout(nextProgressionBeat, quarter);
       }
     }
-
-    // Cancel playback only when user leaves the page (not on blur)
-    // (removed: window.addEventListener('blur', stopProgressionPlayback);)
-
     cancelBtn.addEventListener('click', stopProgressionPlayback);
 
-    // ----- CLEAR MARIMBA-LIKE SYNTH -----
+    // CLEAR MARIMBA-LIKE SYNTH
     const noteFreqs = {
       "C3": 130.81, "C#3": 138.59, "Db3": 138.59, "D3": 146.83, "D#3": 155.56, "Eb3": 155.56, "E3": 164.81, "F3": 174.61, "F#3": 185.00, "Gb3": 185.00, "G3": 196.00, "G#3": 207.65, "Ab3": 207.65, "A3": 220.00, "Bb3": 233.08, "B3": 246.94,
       "C4": 261.63, "C#4": 277.18, "Db4": 277.18, "D4": 293.66, "D#4": 311.13, "Eb4": 311.13, "E4": 329.63, "F4": 349.23, "F#4": 369.99, "Gb4": 369.99, "G4": 392.00, "G#4": 415.30, "Ab4": 415.30, "A4": 440.00, "Bb4": 466.16, "B4": 493.88,
@@ -617,9 +721,8 @@
     function getFreq(note) {
       return noteFreqs[note] || 440;
     }
-
-    // -- VOLUME CONTROL --
-    let userVolume = 0.66; // Default: 66%
+    // Volume control
+    let userVolume = 0.66;
     const globalGain = (() => {
       const ctx = getAudioCtx();
       const gain = ctx.createGain();
@@ -627,65 +730,50 @@
       gain.connect(ctx.destination);
       return gain;
     })();
-
     function getAudioCtx() {
       if (!window._audioCtx) {
         window._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
       return window._audioCtx;
     }
-
     function playClearMarimbaChord(notes, options = {}) {
       const ctx = getAudioCtx();
       const now = ctx.currentTime;
       const duration = options.duration || 0.34;
       const stagger = options.stagger || 0.028;
       const gain = options.gain || 0.17;
-
       notes.forEach((note, i) => {
         const osc = ctx.createOscillator();
         osc.type = "triangle";
         let gainNode = ctx.createGain();
         gainNode.gain.value = 1;
-
-        // Envelope: very fast attack, quick decay, sharp cutoff
         const env = ctx.createGain();
         env.gain.setValueAtTime(0.001, now + i * stagger);
         env.gain.linearRampToValueAtTime(gain, now + i * stagger + 0.005);
         env.gain.linearRampToValueAtTime(gain * 0.32, now + i * stagger + duration * 0.25);
         env.gain.linearRampToValueAtTime(0.001, now + i * stagger + duration);
-
-        // Add a gentle highpass for a woody feel
         const filter = ctx.createBiquadFilter();
         filter.type = "highpass";
         filter.frequency.value = 240;
         filter.Q.value = 1.5;
-
         osc.frequency.value = getFreq(note);
-
-        // "Bounce" effect: quick, gentle pitch drop at the start
         osc.frequency.setValueAtTime(getFreq(note) * 1.04, now + i * stagger);
         osc.frequency.linearRampToValueAtTime(getFreq(note), now + i * stagger + 0.045);
-
         osc.connect(gainNode).connect(filter).connect(env).connect(globalGain);
-
         osc.start(now + i * stagger);
         osc.stop(now + i * stagger + duration);
       });
     }
-
-    // --- Chord definitions ---
+    // Chord definitions
     const chordData = {
       "g-box": ["G3", "D4", "G4", "B4"],
       "d-box": ["D4", "F#4", "A4", "D4"],
       "c-box": ["E4", "G4", "C5", "E5"],
       "em-box": ["E4", "G4", "B4"]
     };
-
-    // --- Hold logic for quarter note pulse at 137 BPM ---
+    // Hold logic for quarter note pulse at 137 BPM
     const bpm = 137;
     const quarter = 60000 / bpm; // ms
-
     const holdTimers = {};
     const repeatPulse = (boxId) => {
       playClearMarimbaChord(chordData[boxId]);
@@ -694,9 +782,8 @@
         repeatPulse(boxId);
       }, quarter);
     };
-
     function startPulse(box) {
-      stopPulse(box.id); // Prevent overlap
+      stopPulse(box.id);
       repeatPulse(box.id);
     }
     function stopPulse(boxId) {
@@ -705,7 +792,6 @@
         holdTimers[boxId] = null;
       }
     }
-
     function setActive(box, on) {
       if (on) {
         box.classList.add('active');
@@ -713,7 +799,6 @@
         box.classList.remove('active');
       }
     }
-
     chordBoxes.forEach(box => {
       box.addEventListener('pointerdown', e => {
         if (!assignmentMode && !isPlaying) {
@@ -746,7 +831,6 @@
         }
       });
     });
-
     // Keyboard logic: only works in normal mode & not playing progression
     const keyToBoxId = {
       "f": "d-box",
@@ -755,7 +839,6 @@
       "b": "em-box"
     };
     const downKeys = {};
-
     document.addEventListener('keydown', e => {
       if (assignmentMode || isPlaying) return;
       const key = e.key.toLowerCase();
@@ -769,7 +852,6 @@
         }
       }
     });
-
     document.addEventListener('keyup', e => {
       if (assignmentMode || isPlaying) return;
       const key = e.key.toLowerCase();
@@ -782,16 +864,12 @@
         }
       }
     });
-
-    // (REMOVED) window.addEventListener('blur', stopProgressionPlayback);
-
     chordBoxes.forEach(box => {
       box.addEventListener('focus', e => {
         box.blur();
       });
     });
-
-    // ---- Volume Control Logic ----
+    // Volume Control Logic
     const volumeSlider = document.getElementById('volume-slider');
     const volumeValue = document.getElementById('volume-value');
     volumeSlider.addEventListener('input', function () {
